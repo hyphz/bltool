@@ -8,9 +8,10 @@
 
 (register-flags ["--xbox-name" "Xbox Live GamerTag"]
   ["--xbox-360-platform" "Platform string to use for Xbox 360 games (recommended: 360, Xbox, XBLA, XNA, XbxGoD)" :default "360"]
-  ["--xbox-one-platform" "Platform string to use for Xbox One games (recommended: XBO, Xbox, XbxGoD)" :default "XBO"])
+  ["--xbox-one-platform" "Platform string to use for Xbox One games (recommended: XBO, Xbox, XbxGoD)" :default "XBO"]
+  ["--xboxapi-key" "Alternative API key to use for xboxapi.com web service" :default ""])
 
-(def xboxapi-key "527f7671354689326b1856b986c564192cd05df6")
+(def default-xboxapi-key "0c713775210b93e6beafd29d1c9b627c0e75f531")
 
 (defn- xml-to-map
   [tag]
@@ -34,8 +35,11 @@
 
 (defn- xboxapi-request
   [url]
-  (let [reply (http/get url { :headers {"X-AUTH" xboxapi-key} :throw-exceptions false :accept :json })]
-    (if (= (get (reply :headers) "x-ratelimit-remaining") 0) (throw+ "Xboxapi.com free access overloaded, try again in an hour or so.") reply)))
+  (let [keytouse
+    (if (:xboxapi-key *opts*) (:xboxapi-key *opts*) (default-xboxapi-key))
+  reply (http/get url { :headers {"X-AUTH" keytouse} :throw-exceptions false :accept :json })]
+    (if (= (get (reply :headers) "x-ratelimit-remaining") 0) (throw+ "Xboxapi.com free access overloaded, try again in an hour or so.")
+       reply)))
 
 
 ; All games in XBL are by definition played since they are not registered until started on the console

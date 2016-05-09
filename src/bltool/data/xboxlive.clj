@@ -9,7 +9,7 @@
 (register-flags ["--xbox-name" "Xbox Live GamerTag"]
   ["--xbox-360-platform" "Platform string to use for Xbox 360 games (recommended: 360, Xbox, XBLA, XNA, XbxGoD)" :default "360"]
   ["--xbox-one-platform" "Platform string to use for Xbox One games (recommended: XBO, Xbox, XbxGoD)" :default "XBO"]
-  ["--xboxapi-key" "Alternative API key to use for xboxapi.com web service" :default ""])
+  ["--xboxapi-key" "Alternative API key to use for xboxapi.com web service"])
 
 (def default-xboxapi-key "0c713775210b93e6beafd29d1c9b627c0e75f531")
 
@@ -36,7 +36,7 @@
 (defn- xboxapi-request
   [url]
   (let [keytouse
-    (if (:xboxapi-key *opts*) (:xboxapi-key *opts*) (default-xboxapi-key))
+    (if (:xboxapi-key *opts*) (:xboxapi-key *opts*) default-xboxapi-key)
   reply (http/get url { :headers {"X-AUTH" keytouse} :throw-exceptions false :accept :json })]
     (if (= (get (reply :headers) "x-ratelimit-remaining") 0) (throw+ "Xboxapi.com free access overloaded, try again in an hour or so.")
        reply)))
